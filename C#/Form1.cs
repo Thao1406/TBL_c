@@ -8,13 +8,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Data.SqlClient;
+    using botthao;
 namespace C_
 {
     public partial class Form1 : Form
     {
+        botthao.bot bot;
         public Form1()
         {
             InitializeComponent();
+            bot = new botthao.bot();
         }
         string chuoiketnoi = @"Data Source=Hi;Initial Catalog=sql;Integrated Security=True";
         string sql;
@@ -79,8 +82,8 @@ namespace C_
             txtgioitinh.Clear();
             txtnamsinh.Clear();
         }
-        String masv;
-        string makhoa;
+        String masv, mk, mp;
+
 
         private void xoasv_Click(object sender, EventArgs e)
         {
@@ -105,12 +108,7 @@ namespace C_
             string dienThoai = txtdienthoai.Text;
             string diaChi = txtdiachi.Text;
 
-            // check gia tri nguời dùng nhập có đúng không - ví dụ là nhập chưa đủ thông tin:
-
             ketnoi.Open();
-
-
-
 
             sql = @"update SINHVIEN
 	     SET
@@ -151,10 +149,9 @@ namespace C_
 	        values 
             (N'" + masv + "' , N'" + hoVaTen + "' , N'" + namSinh + "'  , N'" + gioiTinh + "'  , N'" + dienThoai + "' , N'" + diaChi + "')";
             MessageBox.Show("THÊM THÀNH CÔNG!!");
-
             thuchien = new SqlCommand(sql, ketnoi);
             thuchien.ExecuteNonQuery();
-            xoa();
+            //xoa();
             ketnoi.Close();
 
             loadSV();
@@ -170,38 +167,38 @@ namespace C_
 
         private void themk_Click(object sender, EventArgs e)
         {
-         //   string makhoa= txtmakhoa.Text;
-            
+            string makhoa = txtmak.Text;
+            string tenlop = txttenl.Text;
+            string tenkhoa = txttenk.Text;
 
-         //   ketnoi.Open();
 
-         //   sql = @"insert into KHOA
-	        //values 
-         //   (N'" + makhoa + "' , N'" + tenkhoa + "' , N'" + tenlop + "')";
-         //   MessageBox.Show("THÊM THÀNH CÔNG!!");
+            ketnoi.Open();
 
-         //   thuchien = new SqlCommand(sql, ketnoi);
-         //   thuchien.ExecuteNonQuery();
-         //   xoa();
-         //   ketnoi.Close();
+            sql = @"insert into KHOA
+            values 
+               (N'" + makhoa + "' , N'" + tenkhoa + "' , N'" + tenlop + "')";
+            MessageBox.Show("THÊM THÀNH CÔNG!!");
+
+            thuchien = new SqlCommand(sql, ketnoi);
+            thuchien.ExecuteNonQuery();
+            xoa();
+            ketnoi.Close();
+            loadKhoa();
         }
 
         private void suak_Click(object sender, EventArgs e)
         {
-            string makhoa = txtmakhoa.Text;
-            //string tenlop= txttenlop.Text;
-            //string tenkhoa=txttenkhoa.Text;
+            string makhoa = txtmak.Text;
+            string tenlop = txttenl.Text;
+            string tenkhoa = txttenk.Text;
             // check gia tri nguời dùng nhập có đúng không - ví dụ là nhập chưa đủ thông tin:
 
             ketnoi.Open();
 
-
-
-
-            sql = @"update SINHVIEN
-	     SET
-            makhoa =N'" + makhoa + "')";
-            MessageBox.Show(sql);
+            sql = @"UPDATE [dbo].[KHOA]" +
+                @"SET " +
+                @"[makhoa] = '{makhoa}' ,[tenkhoa] = '{tenkhoa}',[tenlop] = '{tenlop}' WHERE makhoa ='{makhoa}'  ";
+            Console.WriteLine(sql);
             thuchien = new SqlCommand(sql, ketnoi);
             thuchien.ExecuteNonQuery();
             xoa();
@@ -214,7 +211,7 @@ namespace C_
         private void xoaak_Click(object sender, EventArgs e)
         {
             ketnoi.Open();
-            string lenhxoakhoa = "delete from KHOA where makhoa ='" + makhoa + "'";
+            string lenhxoakhoa = "delete from KHOA where makhoa ='" + mk + "'";
 
             thuchien = new SqlCommand(lenhxoakhoa, ketnoi);
             thuchien.ExecuteNonQuery();
@@ -223,40 +220,88 @@ namespace C_
             loadKhoa();
         }
 
-       
+        string mphong;
         private void dataGridView3_CellContentClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex == -1) { return; }
             DataGridViewRow row = dataGridView3.Rows[e.RowIndex];
-            masv = row.Cells[0].Value.ToString();
+            mphong = row.Cells[0].Value.ToString();
         }
 
         private void themp_Click(object sender, EventArgs e)
         {
-            string diaChi = txtdiachi.Text;
 
-
-            // check gia tri nguời dùng nhập có đúng không - ví dụ là nhập chưa đủ thông tin:
-            string maphong= txtmakhoa.Text;
-            string tenphong= txttenphong.Text;
+          
+            string maphong= txtmaphong.Text;
+            string tenphong= txtsophong.Text;
             string loaiphong= txtloaiphong.Text;
             ketnoi.Open();
 
+            // ketnoi.Open();
+        
+
             sql = @"insert into PHONG
-	        values 
-            (N'" + maphong + "' , N'" + tenphong + "' )";
+            values 
+               (N'" + maphong + "' , N'" + tenphong + "' , N'" +loaiphong  + "')";
             MessageBox.Show("THÊM THÀNH CÔNG!!");
 
             thuchien = new SqlCommand(sql, ketnoi);
             thuchien.ExecuteNonQuery();
             xoa();
             ketnoi.Close();
+            loadKhoa();
             loadphong();
         }
 
         private void suap_Click(object sender, EventArgs e)
         {
 
+            string maphong = txtmaphong.Text;
+            string sophong = txtsophong.Text;
+            string loaiphong = txtloaiphong.Text;
+          
+
+            ketnoi.Open();
+
+            sql = $"UPDATE [dbo].[PHONG]" +
+                 $"SET " +
+                 $"[maphong] = '{maphong}' ,[sophong] = '{sophong}',[loaiphong] = '{loaiphong}' WHERE maphong ='{maphong}'";
+            Console.WriteLine(sql);
+            MessageBox.Show(sql);
+            thuchien = new SqlCommand(sql, ketnoi);
+            thuchien.ExecuteNonQuery();
+            xoa();
+            ketnoi.Close();
+
+            loadphong();
+        }
+
+
+        private void xoap_Click(object sender, EventArgs e)
+        {
+            ketnoi.Open();
+            string maPhongXoa = "";
+            if(dataGridView3.SelectedRows.Count < 0)
+            {
+                return;
+            }
+            else
+            {
+                maPhongXoa = dataGridView3.CurrentRow.Cells[0].Value.ToString();
+            }
+            string lenhxoaphong = "delete from PHONG where maphong ='" + maPhongXoa + "'";
+            Console.WriteLine(lenhxoaphong);
+            thuchien = new SqlCommand(lenhxoaphong, ketnoi);
+            thuchien.ExecuteNonQuery();
+            ketnoi.Close();
+            loadphong() ;
+        }
+
+        private void dataGridView2_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex == -1) { return; }
+            DataGridViewRow row = dataGridView2.Rows[e.RowIndex];
+            mk = row.Cells[0].Value.ToString();
         }
     }
 }
